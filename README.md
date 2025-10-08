@@ -71,11 +71,16 @@
 
 [
   {
-    "id": "e3f4a5b6-7890-12cd-ef34-5678901ab003",
-    "name": "Мария Смирнова",
-    "email": "maria@example.ru",
-    "phone": "+79997776655",
-    "status": "active"
+    "id": "e3f4a5b6-7890-12cd-ef34-5678901ab003",  
+    
+    "name": "Мария Смирнова",  
+    
+    "email": "maria@example.ru",  
+    
+    "phone": "+79997776655",  
+    
+    "status": "active"  
+    
   }
 ]
 
