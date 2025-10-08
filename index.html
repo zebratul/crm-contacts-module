@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Контакты — Тёмная демо-страница</title>
+  <style>
+    /* Переменные темы */
+    :root{
+      --bg:#0b0d10;
+      --panel:#0f1316;
+      --muted:#bdbdbd;
+      --text:#eee;
+      --accent:#ff8a00;
+      --card-shadow: 0 6px 18px rgba(0,0,0,0.6);
+      --radius:12px;
+      --glass: rgba(255,255,255,0.02);
+      --max-width:1100px;
+      --option-bg: rgba(255,255,255,0.96); /* светлый фон для опций */
+    }
+
+    /* Сброс и базовые стили */
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,"Segoe UI",Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg,var(--bg), #071014 120%);
+      color:var(--text);
+      padding:24px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+    }
+
+    .wrap{ width:100%; max-width:var(--max-width); }
+
+    header{ margin-bottom:18px; display:flex; align-items:center; gap:12px; justify-content:space-between; }
+    h1{ font-size:1.2rem; margin:0; font-weight:600; }
+    p.lead{ margin:0; color:var(--muted); font-size:0.9rem; }
+
+    /* Макет: мобильный сначала */
+    .grid{ display:grid; grid-template-columns:1fr; gap:18px; }
+    @media(min-width:880px){
+      .grid{ grid-template-columns: 1fr 360px; align-items:start; }
+    }
+
+    .panel{
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+      border-radius:var(--radius);
+      padding:14px;
+      box-shadow:var(--card-shadow);
+      border:1px solid rgba(255,255,255,0.03);
+    }
+
+    /* Фильтр */
+    .filter{ display:flex; align-items:center; gap:12px; margin-bottom:12px; justify-content:space-between; }
+    .filter-left{ display:flex; gap:12px; align-items:center; }
+    .switch{ --w:46px; --h:26px; display:inline-grid; width:var(--w); height:var(--h); padding:3px; background:rgba(255,255,255,0.06); border-radius:999px; align-items:center; position:relative; cursor:pointer; }
+    .switch input{ position:absolute; inset:0; opacity:0; margin:0; cursor:pointer; z-index:2; }
+    .knob{ width:20px; height:20px; border-radius:50%; background:linear-gradient(180deg,#fff5,#fff0); transform:translateX(0); transition:transform .18s ease, background .18s ease; margin-left:3px; box-shadow:0 4px 8px rgba(0,0,0,0.5), inset 0 -6px 10px rgba(255,255,255,0.02); }
+    .switch input:checked + .knob{ transform:translateX(20px); box-shadow: 0 6px 12px rgba(0,0,0,0.6), 0 0 0 3px rgba(255,138,0,0.08); }
+    .filter-label{ font-size:0.95rem; }
+
+    /* Список контактов */
+    .contacts-panel{ display:flex; flex-direction:column; gap:12px; }
+    .meta{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:6px; }
+    .count{ color:var(--muted); font-size:0.9rem; }
+    ul.contacts{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:10px; }
+    li.contact{
+      background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
+      padding:12px; border-radius:10px; display:flex; flex-direction:column; gap:8px;
+      border:1px solid rgba(255,255,255,0.03); transition:transform .15s ease, box-shadow .15s ease;
+    }
+    li.contact:hover{ transform:translateY(-4px); box-shadow: 0 10px 30px rgba(0,0,0,0.7); }
+    .row{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
+    .name{ font-weight:600; letter-spacing:0.2px; font-size:1rem; }
+    .badge{ font-size:0.78rem; padding:6px 8px; border-radius:999px; background:var(--glass); color:var(--muted); border:1px solid rgba(255,255,255,0.02); }
+    .details{ color:var(--muted); font-size:0.88rem; display:flex; gap:12px; flex-wrap:wrap; }
+    .meta-key{ color:var(--muted); font-size:0.75rem; }
+
+    /* Форма */
+    form.contact-form{ display:flex; flex-direction:column; gap:10px; }
+    .field{ display:flex; flex-direction:column; gap:6px; }
+    label{ font-size:0.88rem; color:var(--muted); }
+    input[type="text"], input[type="email"], select{
+      padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.03);
+      background:transparent; color:var(--text); outline:none; font-size:0.95rem;
+    }
+    input[type="text"]:focus, input[type="email"]:focus, select:focus{
+      box-shadow:0 6px 18px rgba(0,0,0,0.7), 0 0 0 4px rgba(255,138,0,0.06);
+      border-color:rgba(255,138,0,0.14);
+    }
+
+    .btn{ appearance:none; border:0; padding:10px 14px; border-radius:10px; cursor:pointer; font-weight:600; letter-spacing:0.3px; background:linear-gradient(180deg,var(--accent), #e76f00); color:#071014; box-shadow: 0 8px 20px rgba(255,138,0,0.08); transition:transform .12s ease, box-shadow .12s ease, opacity .12s ease; }
+    .btn:active{ transform:translateY(1px) }
+    .btn.secondary{ background:transparent; color:var(--muted); border:1px solid rgba(255,255,255,0.04); }
+    .btn:focus{ outline:3px solid rgba(255,138,0,0.12) }
+
+    .muted{ color:var(--muted); font-size:0.85rem }
+    .empty{ padding:18px; text-align:center; color:var(--muted); border-radius:10px; border:1px dashed rgba(255,255,255,0.03); background:transparent; }
+
+    /* ---- Специальная часть: стили для <option> ----
+       Требование: текст опций виден только при наведении, и при наведении текст чёрный на светлом фоне.
+       Замечание: оформление <option> ограничено браузерами; добавлены !important хитрости для лучшей совместимости.
+    */
+    select option{
+      /* по умолчанию скрываем цвет текста внутри раскрытого списка */
+      color: #000 !important;
+      -webkit-text-fill-color: transparent !important;
+      background: var(--option-bg) !important; /* светлый фон для каждой опции */
+    }
+
+    /* некоторые браузеры игнорируют option:hover; добавим фолбэк — при фокусе на списке показываем опции с прозрачным текстом,
+       но это не позволяет различить hovered — реальное поведение зависит от браузера.
+       Тем не менее, основные современные браузеры будут применять option:hover правила.
+    */
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>Контакты</h1>
+      </div>
+      <div class="muted">Локальная демо — без сервера</div>
+    </header>
+
+    <main class="grid">
+      <!-- Левая колонка: фильтр и список -->
+      <section class="panel contacts-panel" aria-labelledby="contacts-heading">
+        <div class="filter">
+          <div class="filter-left">
+            <label class="filter-label" for="active-toggle">Показать только активных пользователей</label>
+            <label class="switch" title="Переключить фильтр активных">
+              <input id="active-toggle" type="checkbox" aria-pressed="false" />
+              <span class="knob" aria-hidden="true"></span>
+            </label>
+          </div>
+          <div class="meta">
+            <div class="count" id="contacts-count" aria-live="polite">0 контактов</div>
+          </div>
+        </div>
+
+        <ul class="contacts" id="contacts-list" aria-live="polite"></ul>
+        <div id="empty-state" class="empty" hidden>Нет контактов для отображения.</div>
+      </section>
+
+      <!-- Правая колонка: форма добавления -->
+      <aside class="panel" aria-labelledby="add-heading">
+        <h2 id="add-heading" style="margin:0 0 10px 0;font-size:1rem">Добавить новый контакт</h2>
+        <form id="contact-form" class="contact-form" novalidate>
+          <div class="field">
+            <label for="name">ФИО</label>
+            <input id="name" name="name" type="text" required autocomplete="name" placeholder="Анастасия Иванова" />
+          </div>
+
+          <div class="field">
+            <label for="email">Электронная почта</label>
+            <input id="email" name="email" type="email" required autocomplete="email" placeholder="anastasia@example.ru" />
+          </div>
+
+          <div class="field">
+            <label for="phone">Телефон</label>
+            <input id="phone" name="phone" type="text" required autocomplete="tel" placeholder="+79111234567" />
+          </div>
+
+          <div class="field">
+            <label for="status">Статус</label>
+            <select id="status" name="status" required>
+              <!-- Значения остаются 'active' и 'inactive' для логики; метки отображаются на русском -->
+              <option value="active">Активный</option>
+              <option value="inactive">Неактивный</option>
+            </select>
+          </div>
+
+          <div style="display:flex;gap:8px;margin-top:6px">
+            <button type="submit" class="btn">Отправить</button>
+            <button type="button" id="reset-btn" class="btn secondary">Сбросить</button>
+          </div>
+        </form>
+      </aside>
+    </main>
+  </div>
+
+  <script>
+    /*******************************************
+     * Контакты — реализация в одном файле
+     * Данные: localStorage (ключ STORAGE_KEY)
+     *******************************************/
+
+    const STORAGE_KEY = 'contacts.mockdb.v1';
+
+    /* Начальные контакты — имена и прочее на русском,
+       но поле status хранит 'active' / 'inactive' для корректной фильтрации. */
+    const DEFAULT_CONTACTS = [
+      { id: crypto.randomUUID(), name: 'Анастасия Иванова', email: 'anastasia.ivanova@example.ru', phone: '+79111234567', status: 'active' },
+      { id: crypto.randomUUID(), name: 'Дмитрий Смирнов', email: 'dmitriy.smirnov@example.ru', phone: '+74951230011', status: 'inactive' },
+      { id: crypto.randomUUID(), name: 'Екатерина Петрова', email: 'ekaterina.petrova@example.ru', phone: '+79261239876', status: 'active' }
+    ];
+
+    /* -----------------------
+     * Обязательные функции данных
+     * ----------------------- */
+
+    // Возвращает все контакты из localStorage
+    function getAllContacts(){
+      try{
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if(!raw) return [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (e){
+        console.error('Ошибка чтения контактов, реинициализация.', e);
+        localStorage.removeItem(STORAGE_KEY);
+        return [];
+      }
+    }
+
+    // Валидирует и добавляет контакт (contactData: {name,email,phone,status}), возвращает добавленный объект
+    function addContact(contactData){
+      const name = String(contactData.name || '').trim();
+      const email = String(contactData.email || '').trim();
+      const phone = String(contactData.phone || '').trim();
+      const status = String(contactData.status || '').trim();
+
+      if(!name || !email || !phone || !status){
+        throw new Error('Все поля обязательны.');
+      }
+      if(!email.includes('@')){
+        throw new Error('Электронная почта должна содержать символ "@".');
+      }
+      if(!/^\+?\d+$/.test(phone)){
+        throw new Error('Телефон должен содержать только цифры или начинаться с "+" и затем цифры.');
+      }
+
+      const newContact = {
+        id: (crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now()),
+        name, email, phone, status
+      };
+
+      const all = getAllContacts();
+      all.unshift(newContact);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
+      return newContact;
+    }
+
+    // Возвращает только контакты, у которых status === 'active' (регистронезависимо)
+    function findActiveContacts(){
+      const all = getAllContacts();
+      return all.filter(c => String(c.status || '').toLowerCase() === 'active');
+    }
+
+    /* -----------------------
+     * Помощники UI
+     * ----------------------- */
+
+    const listEl = document.getElementById('contacts-list');
+    const countEl = document.getElementById('contacts-count');
+    const emptyEl = document.getElementById('empty-state');
+    const activeToggle = document.getElementById('active-toggle');
+    const form = document.getElementById('contact-form');
+    const resetBtn = document.getElementById('reset-btn');
+
+    // Рендер списка контактов
+    const renderContacts = (contacts = []) => {
+      listEl.innerHTML = '';
+      if(!contacts.length){
+        emptyEl.hidden = false;
+        countEl.textContent = '0 контактов';
+        return;
+      }
+      emptyEl.hidden = true;
+      countEl.textContent = `${contacts.length} ${ruContactWord(contacts.length)}`;
+
+      contacts.forEach(contact => {
+        const li = document.createElement('li');
+        li.className = 'contact';
+        li.setAttribute('tabindex', '0');
+
+        // Отображаем статус на русском
+        const statusTxt = (String(contact.status || '').toLowerCase() === 'active') ? 'Активный' : 'Неактивный';
+
+        li.innerHTML = `
+          <div class="row">
+            <div class="name">${escapeHtml(contact.name)}</div>
+            <div class="badge">${statusTxt}</div>
+          </div>
+          <div class="details">
+            <div class="meta-key">ID: <span style="color:var(--muted);font-family:monospace">${escapeHtml(contact.id)}</span></div>
+            <div class="meta-key">Почта: <a href="mailto:${escapeAttr(contact.email)}" style="color:var(--muted);text-decoration:none">${escapeHtml(contact.email)}</a></div>
+            <div class="meta-key">Телефон: <a href="tel:${escapeAttr(contact.phone)}" style="color:var(--muted);text-decoration:none">${escapeHtml(contact.phone)}</a></div>
+          </div>
+        `;
+        listEl.appendChild(li);
+      });
+    };
+
+    // Экранирование текста для предотвращения XSS
+    function escapeHtml(str){
+      return String(str)
+        .replaceAll('&','&amp;')
+        .replaceAll('<','&lt;')
+        .replaceAll('>','&gt;')
+        .replaceAll('"','&quot;')
+        .replaceAll("'",'&#39;');
+    }
+    function escapeAttr(str){
+      return String(str).replaceAll('"','%22').replaceAll("'",'%27');
+    }
+
+    // Инициализация данных в localStorage при первом запуске
+    function ensureInitialData(){
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw){
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_CONTACTS));
+      } else {
+        try{
+          const parsed = JSON.parse(raw);
+          if(!Array.isArray(parsed)){
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_CONTACTS));
+          }
+        } catch (e){
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_CONTACTS));
+        }
+      }
+    }
+
+    // Обновить вид в зависимости от состояния переключателя
+    function refreshView(){
+      const showActiveOnly = activeToggle.checked;
+      const contacts = showActiveOnly ? findActiveContacts() : getAllContacts();
+      renderContacts(contacts);
+      activeToggle.setAttribute('aria-pressed', showActiveOnly ? 'true' : 'false');
+    }
+
+    /* -----------------------
+     * События
+     * ----------------------- */
+
+    activeToggle.addEventListener('change', () => {
+      refreshView();
+    });
+
+    form.addEventListener('submit', (ev) => {
+      ev.preventDefault();
+      const fd = new FormData(form);
+      const data = {
+        name: fd.get('name')?.trim(),
+        email: fd.get('email')?.trim(),
+        phone: fd.get('phone')?.trim(),
+        status: fd.get('status')?.trim()
+      };
+
+      try {
+        const added = addContact(data);
+        form.reset();
+        refreshView();
+        // Для доступности — фокус на первом элементе списка
+        listEl.querySelector('li.contact')?.focus();
+      } catch (err) {
+        // Сообщения об ошибках — на русском
+        alert(err.message || 'Некорректные данные.');
+      }
+    });
+
+    resetBtn.addEventListener('click', () => form.reset());
+
+    /* -----------------------
+     * Инициализация
+     * ----------------------- */
+    (function init(){
+      ensureInitialData();
+      refreshView();
+      document.addEventListener('keydown', (e) => {
+        if(e.key === 'Tab') document.documentElement.classList.add('show-focus');
+      }, { once:true });
+    })();
+
+    /* -----------------------
+     * Утилиты и экспорты
+     * ----------------------- */
+
+    // Правильное русское окончание для слова "контакт"
+    function ruContactWord(n){
+      n = Math.abs(n) % 100;
+      const n1 = n % 10;
+      if(n > 10 && n < 20) return 'контактов';
+      if(n1 > 1 && n1 < 5) return 'контакта';
+      if(n1 === 1) return 'контакт';
+      return 'контактов';
+    }
+
+    // Экспортируем обязательные функции в глобальную область (для тестирования)
+    window.getAllContacts = getAllContacts;
+    window.addContact = addContact;
+    window.findActiveContacts = findActiveContacts;
+
+  </script>
+</body>
+</html>
