@@ -69,11 +69,15 @@
 
 Каждый контакт хранится в localStorage в формате JSON-объекта:
 
-  "id": "уникальный_идентификатор",
-  "name": "Имя Контакта",
-  "email": "email@пример.ру",
-  "phone": "+71234567890",
-  "status": "active" или "inactive"
+[
+  {
+    "id": "e3f4a5b6-7890-12cd-ef34-5678901ab003",
+    "name": "Мария Смирнова",
+    "email": "maria@example.ru",
+    "phone": "+79997776655",
+    "status": "active"
+  }
+]
 
 ---
 
